@@ -16,6 +16,23 @@ set -ouex pipefail
 # Disable COPRs so they don't end up enabled on the final image:
 # dnf5 -y copr disable ublue-os/staging
 
+# Directly from the Fedora install guide. I have not had much luck, with the more "proper" DistroBox based install.
+# Specifically, I have not been able to get the netbird-ui to work.
+# https://docs.netbird.io/get-started/install/linux#fedora-amazon-linux-2023-dnf
+sudo tee /etc/yum.repos.d/netbird.repo <<EOF
+[netbird]
+name=netbird
+baseurl=https://pkgs.netbird.io/yum/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.netbird.io/yum/repodata/repomd.xml.key
+repo_gpgcheck=1
+EOF
+
+sudo dnf config-manager addrepo --from-repofile=/etc/yum.repos.d/netbird.repo
+
+sudo dnf install libappindicator-gtk3 libappindicator netbird-ui
+
 # Installing sync software for Mega.io 
 wget https://mega.nz/linux/repo/Fedora_43/x86_64/megasync-Fedora_43.x86_64.rpm && dnf5 install "$PWD/megasync-Fedora_43.x86_64.rpm"
 rm megasync-Fedora_43.x86_64.rpm
