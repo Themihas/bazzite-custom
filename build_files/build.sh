@@ -29,7 +29,10 @@ gpgkey=https://pkgs.netbird.io/yum/repodata/repomd.xml.key
 repo_gpgcheck=1
 EOF
 
-dnf5 -y install libappindicator-gtk3 libappindicator netbird-ui
+# Use --setopt=tsflags=noscripts to skip the %post scriptlet which tries to
+# start the netbird service during build (systemd is not running in containers).
+# Enable the service manually when needed with: systemctl enable --now netbird
+dnf5 -y install --setopt=tsflags=noscripts libappindicator-gtk3 libappindicator netbird-ui
 
 # Installing sync software for Mega.io
 wget https://mega.nz/linux/repo/Fedora_43/x86_64/megasync-Fedora_43.x86_64.rpm && dnf5 -y install "$PWD/megasync-Fedora_43.x86_64.rpm"
