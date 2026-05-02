@@ -15,6 +15,17 @@ set -ouex pipefail
 # dnf5 -y install package
 # Disable COPRs so they don't end up enabled on the final image:
 # dnf5 -y copr disable ublue-os/staging
+#
+# Installing sync software for Mega.io
+# Use --setopt=tsflags=noscripts to skip the %post scriptlet which fails in container builds
+# (tries to import GPG keys and set sysctl values which are not permitted)
+# wget https://mega.nz/linux/repo/Fedora_43/x86_64/megasync-Fedora_43.x86_64.rpm && dnf5 -y install --setopt=tsflags=noscripts "$PWD/megasync-Fedora_43.x86_64.rpm"
+wget https://mega.nz/linux/repo/Fedora_44/x86_64/megasync-Fedora_44.x86_64.rpm && dnf5 -y install --setopt=tsflags=noscripts "$PWD/megasync-Fedora_44.x86_64.rpm"
+rm megasync-Fedora_44.x86_64.rpm
+
+#### Example for enabling a System Unit File
+
+systemctl enable podman.socket
 
 # Directly from the Fedora install guide. I have not had much luck, with the more "proper" DistroBox based install.
 # Specifically, I have not been able to get the netbird-ui to work.
@@ -62,15 +73,3 @@ mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sf /etc/systemd/system/netbird.service \
        /etc/systemd/system/multi-user.target.wants/netbird.service
 
-# Installing sync software for Mega.io
-# Use --setopt=tsflags=noscripts to skip the %post scriptlet which fails in container builds
-# (tries to import GPG keys and set sysctl values which are not permitted)
-# wget https://mega.nz/linux/repo/Fedora_43/x86_64/megasync-Fedora_43.x86_64.rpm && dnf5 -y install --setopt=tsflags=noscripts "$PWD/megasync-Fedora_43.x86_64.rpm"
-wget https://mega.nz/linux/repo/Fedora_44/x86_64/megasync-Fedora_44.x86_64.rpm && dnf5 -y install --setopt=tsflags=noscripts "$PWD/megasync-Fedora_44.x86_64.rpm"
-rm megasync-Fedora_44.x86_64.rpm
-
-#### Example for enabling a System Unit File
-
-systemctl enable podman.socket
-
-ls /run/dnf
