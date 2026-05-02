@@ -34,6 +34,8 @@ EOF
 # Enable the service manually when needed with: systemctl enable --now netbird
 dnf5 -y install --setopt=tsflags=noscripts libappindicator-gtk3 libappindicator netbird-ui libcap       # ensure setcap exists
 
+# Write the systemd service unit manually (since tsflags=noscripts skipped the package's own install)
+# ExecStart must be "netbird service run" — this is the correct daemon entrypoint
 cat > /etc/systemd/system/netbird.service <<'EOF'
 [Unit]
 Description=NetBird agent
@@ -42,19 +44,23 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/netbird agent
+ExecStart=/usr/bin/netbird service run
 Restart=on-failure
 RestartSec=5
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
-NoNewPrivileges=no
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
+# Grant the binary the required capabilities so it can manage WireGuard interfaces
+# without running as full root
 setcap 'cap_net_admin,cap_net_raw+eip' /usr/bin/netbird
 getcap /usr/bin/netbird
+
+# Enable the service via symlink — more reliable than `systemctl enable` inside a container build
+mkdir -p /etc/systemd/system/multi-user.target.wants
+ln -sf /etc/systemd/system/netbird.service \
+       /etc/systemd/system/multi-user.target.wants/netbird.service
 
 # Installing sync software for Mega.io
 # Use --setopt=tsflags=noscripts to skip the %post scriptlet which fails in container builds
@@ -65,9 +71,6 @@ rm megasync-Fedora_44.x86_64.rpm
 
 #### Example for enabling a System Unit File
 
-# /usr/bin/netbird service install
-# systemctl daemon-reload
-systemctl enable netbird.service
 systemctl enable podman.socket
 
 ls /run/dnf
