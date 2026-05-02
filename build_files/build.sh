@@ -34,6 +34,21 @@ EOF
 # Enable the service manually when needed with: systemctl enable --now netbird
 dnf5 -y install --setopt=tsflags=noscripts libappindicator-gtk3 libappindicator netbird-ui
 
+sudo tee /etc/systemd/system/netbird.service > /dev/null <<'EOF'
+[Unit]
+Description=NetBird agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/netbird agent
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 # Installing sync software for Mega.io
 # Use --setopt=tsflags=noscripts to skip the %post scriptlet which fails in container builds
 # (tries to import GPG keys and set sysctl values which are not permitted)
@@ -43,7 +58,7 @@ rm megasync-Fedora_44.x86_64.rpm
 
 #### Example for enabling a System Unit File
 
-/usr/bin/netbird service install
-systemctl daemon-reload
+# /usr/bin/netbird service install
+# systemctl daemon-reload
 systemctl enable netbird
 systemctl enable podman.socket
