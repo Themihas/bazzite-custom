@@ -32,22 +32,29 @@ EOF
 # Use --setopt=tsflags=noscripts to skip the %post scriptlet which tries to
 # start the netbird service during build (systemd is not running in containers).
 # Enable the service manually when needed with: systemctl enable --now netbird
-dnf5 -y install --setopt=tsflags=noscripts libappindicator-gtk3 libappindicator netbird-ui
+dnf5 -y install --setopt=tsflags=noscripts libappindicator-gtk3 libappindicator netbird-ui libcap       # ensure setcap exists
 
-sudo tee /etc/systemd/system/netbird.service > /dev/null <<'EOF'
+cat > /etc/systemd/system/netbird.service <<'EOF'
 [Unit]
 Description=NetBird agent
-After=network.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
 ExecStart=/usr/bin/netbird agent
 Restart=on-failure
 RestartSec=5
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+NoNewPrivileges=no
 
 [Install]
 WantedBy=multi-user.target
 EOF
+
+setcap 'cap_net_admin,cap_net_raw+eip' /usr/bin/netbird
+getcap /usr/bin/netbird
 
 # Installing sync software for Mega.io
 # Use --setopt=tsflags=noscripts to skip the %post scriptlet which fails in container builds
@@ -60,5 +67,7 @@ rm megasync-Fedora_44.x86_64.rpm
 
 # /usr/bin/netbird service install
 # systemctl daemon-reload
-systemctl enable netbird
+systemctl enable netbird.service
 systemctl enable podman.socket
+
+ls /run/dnf
