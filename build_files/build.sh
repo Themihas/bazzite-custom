@@ -37,9 +37,13 @@ dnf5 -y install --setopt=tsflags=noscripts libappindicator-gtk3 libappindicator 
 # Installing sync software for Mega.io
 # Use --setopt=tsflags=noscripts to skip the %post scriptlet which fails in container builds
 # (tries to import GPG keys and set sysctl values which are not permitted)
-wget https://mega.nz/linux/repo/Fedora_43/x86_64/megasync-Fedora_43.x86_64.rpm && dnf5 -y install --setopt=tsflags=noscripts "$PWD/megasync-Fedora_43.x86_64.rpm"
-rm megasync-Fedora_43.x86_64.rpm
+# wget https://mega.nz/linux/repo/Fedora_43/x86_64/megasync-Fedora_43.x86_64.rpm && dnf5 -y install --setopt=tsflags=noscripts "$PWD/megasync-Fedora_43.x86_64.rpm"
+wget https://mega.nz/linux/repo/Fedora_44/x86_64/megasync-Fedora_44.x86_64.rpm && dnf5 -y install --setopt=tsflags=noscripts "$PWD/megasync-Fedora_44.x86_64.rpm"
+rm megasync-Fedora_44.x86_64.rpm
 
 #### Example for enabling a System Unit File
 
+/usr/bin/netbird service install
+systemctl daemon-reload
+systemctl enable netbird
 systemctl enable podman.socket
