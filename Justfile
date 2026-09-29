@@ -81,18 +81,21 @@ sudoif command *args:
 #
 # Example usage:
 #   just build aurora lts
+#   just build bazzite-custom latest cosmic   # build the COSMIC variant
 #
 # This will build an image 'aurora:lts' with DX and GDX enabled.
 #
 
 # Build the image using the specified parameters
-build $target_image=image_name $tag=default_tag:
+build $target_image=image_name $tag=default_tag $variant="kde":
     #!/usr/bin/env bash
 
     BUILD_ARGS=()
     if [[ -z "$(git status -s)" ]]; then
         BUILD_ARGS+=("--build-arg" "SHA_HEAD_SHORT=$(git rev-parse --short HEAD)")
     fi
+
+    BUILD_ARGS+=("--build-arg" "VARIANT=${variant}")
 
     podman build \
         "${BUILD_ARGS[@]}" \
