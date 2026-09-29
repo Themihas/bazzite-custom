@@ -2,6 +2,27 @@
 
 This repository is meant to be a template for building your own custom [bootc](https://github.com/bootc-dev/bootc) image. This template is the recommended way to make customizations to any image published by the Universal Blue Project.
 
+# Variants
+
+This repo builds two images from `main`:
+
+| Tag | Desktop |
+|-----|---------|
+| `ghcr.io/themihas/bazzite-custom:latest-kde` | KDE Plasma (default Bazzite desktop) |
+| `ghcr.io/themihas/bazzite-custom:latest-cosmic` | COSMIC, installed alongside Plasma. Plasma stays available as a fallback session, selectable in SDDM. |
+
+Dated tags (`latest-kde.YYYYMMDD`, `latest-cosmic.YYYYMMDD`) are published too. The plain `latest` / `YYYYMMDD` tags are legacy aliases for the KDE variant and will be removed.
+
+To switch variants, pin the current deployment first so you can roll back:
+
+```bash
+sudo ostree admin pin 0
+rpm-ostree rebase ostree-image-signed:docker://ghcr.io/themihas/bazzite-custom:latest-cosmic
+# or :latest-kde
+```
+
+Local builds: `just build bazzite-custom latest cosmic` (the variant defaults to `kde`).
+
 # Community
 
 If you have questions about this template after following the instructions, try the following spaces:

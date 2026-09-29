@@ -73,3 +73,8 @@ mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sf /etc/systemd/system/netbird.service \
        /etc/systemd/system/multi-user.target.wants/netbird.service
 
+### Variant-specific steps
+# VARIANT comes from the Containerfile ARG (default: kde)
+if [[ "${VARIANT:-kde}" == "cosmic" ]]; then
+    bash /ctx/cosmic.sh
+fi
