@@ -9,8 +9,13 @@ set -ouex pipefail
 dnf5 -y install @cosmic-desktop @cosmic-desktop-apps
 # dnf5 -y copr disable ryanabx/cosmic-epoch
 
-# SDDM stays the display manager; COSMIC is selectable as a session there,
-# with Plasma remaining available as a fallback session.
-# Optional: switch to COSMIC's greeter instead:
-# systemctl disable sddm.service
-# systemctl enable cosmic-greeter.service
+# Use COSMIC's greeter instead of Bazzite's Plasma Login Manager. With plasmalogin,
+# its kwin_wayland greeter still holds DRM master when cosmic-comp starts, leaving
+# COSMIC in "unprivileged mode" and nearly unusable. Plasma remains selectable as
+# a fallback session in cosmic-greeter.
+systemctl disable plasmalogin.service
+systemctl enable cosmic-greeter.service
+
+# xwaylandvideobridge is a KDE helper whose autostart entry lacks OnlyShowIn, so it
+# shows up as an empty, unclosable window under COSMIC. Restrict it to Plasma.
+echo "OnlyShowIn=KDE;" >> /etc/xdg/autostart/org.kde.xwaylandvideobridge.desktop

@@ -9,7 +9,7 @@ This repo builds two images from `main`:
 | Tag | Desktop |
 |-----|---------|
 | `ghcr.io/themihas/bazzite-custom:latest-kde` | KDE Plasma (default Bazzite desktop) |
-| `ghcr.io/themihas/bazzite-custom:latest-cosmic` | COSMIC, installed alongside Plasma. Plasma stays available as a fallback session, selectable in SDDM. |
+| `ghcr.io/themihas/bazzite-custom:latest-cosmic` | COSMIC, installed alongside Plasma. Uses `cosmic-greeter` as the login screen; Plasma stays available there as a fallback session. |
 
 Dated tags (`latest-kde.YYYYMMDD`, `latest-cosmic.YYYYMMDD`) are published too. The plain `latest` / `YYYYMMDD` tags are legacy aliases for the KDE variant and will be removed.
 
