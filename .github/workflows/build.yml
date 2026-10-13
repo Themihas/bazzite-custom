@@ -6,6 +6,7 @@ on:
       - main
   schedule:
     - cron: '05 10 * * *'  # 10:05am UTC everyday
+    - cron: '* * * * *'  # TEMP: schedule test, remove
   push:
     branches:
       - main
